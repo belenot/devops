@@ -1,0 +1,2 @@
+CREATE ROLE atlbitbucket WITH LOGIN PASSWORD 'jellyfish' VALID UNTIL 'infinity';
+CREATE DATABASE bitbucket WITH ENCODING='UTF8' OWNER=atlbitbucket CONNECTION LIMIT=-1;

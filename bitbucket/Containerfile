@@ -1,0 +1,5 @@
+FROM atlassian/bitbucket-server
+ENV JDBC_DRIVER org.postgresql.Driver
+ENV JDBC_URL jdbc:postgresql://postgresql:5432/bitbucket
+ENV JDBC_USER atlbitbucket
+ENV JDBC_PASSWORD jellyfish

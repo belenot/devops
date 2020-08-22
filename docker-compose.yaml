@@ -1,0 +1,64 @@
+version: '3.2'
+services:
+  bitbucket:
+    depends_on: 
+    - postgresql
+    build: 
+      context: ./bitbucket
+      dockerfile: Containerfile
+    ports:
+    - '7990:7990'
+    - '7999:7999'
+    volumes:
+    - type: bind
+      source: ./volumes/bitbucket-shared
+      target: /var/atlassian/application-data/bitbucket/shared
+    networks:
+    - devops
+  postgresql:
+    build: 
+      context: ./postgresql
+      dockerfile: Containerfile
+    ports:
+    - '5432'
+    volumes:
+    - type: bind
+      source: ./volumes/postgresql
+      target: /var/lib/postgresql/data
+    networks:
+    - devops
+#  jenkins:
+#    build: 
+#      context: ./jenkins
+#      dockerfile: Containerfile
+#    ports:
+#    - '8080:8080'
+#    - '50000:50000'
+#    volumes:
+#    - type: bind
+#      source: ./volumes/jenkins # must be with uid = 1000, gid = 1000
+#      target: /var/jenkins_home
+#    networks:
+#    - devops
+  nexus:
+    build: 
+      context: ./nexus
+      dockerfile: Containerfile
+    ports:
+    - '8081:8081'
+    volumes:
+    - type: bind
+      source: ./volumes/nexus # must be with uid = nexus 200, gid = nexus 200
+      target: /nexus-data
+    networks:
+    - devops
+  nginx:
+    build: 
+      context: ./nginx
+      dockerfile: Containerfile
+    ports:
+    - '50000:50000'
+    networks:
+    - devops
+networks:
+  devops: {}

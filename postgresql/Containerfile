@@ -1,0 +1,2 @@
+FROM postgres:latest
+COPY bitbucket.sql /docker-entrypoint-initdb.d/bitbucket.sql
