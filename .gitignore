@@ -2,3 +2,7 @@
 /jenkins/.vagrant
 /jenkins/jenkins_home
 /kubernetes/.vagrant
+
+*~
+\#*
+*\#
