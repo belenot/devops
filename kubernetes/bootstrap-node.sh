@@ -1,0 +1,1 @@
+cp /vagrant/certs/${instance}-key.pem /vagrant/certs/${instance}.pem ~/
