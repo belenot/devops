@@ -6,3 +6,8 @@
 *~
 \#*
 *\#
+/kubernetes/creds
+!/kubernetes/creds/openssl.conf
+!/kubernetes/creds/bootstrap-creds.sh
+/kubernetes/control-plane/binaries
+/kubernetes/node/binaries

@@ -1,37 +1,36 @@
-openssl req -out rootCA.pem -keyout rootCA-key.pem -nodes -new -days 365 -newkey rsa:2048 -x509 -subj "/CN=root"
+ls | grep -v '\.conf$\|\.sh$'   | xargs rm -rf
+touch database.txt && echo 'unique_subject=yes' > database.txt.attr && echo 1000 > serial.txt
 
-openssl req -out admin-csr.pem -new -nodes -keyout admin-key.pem -days 365 -subj "/CN=admin" -newkey rsa:2048
-openssl x509 -in admin-csr.pem -out admin.pem -days 356 -req -CA rootCA.pem -CAkey rootCA-key.pem
+# Create root ca
+CN=belenot ALTNAMES='DNS:belenot' openssl req -config openssl.conf -new -x509 -keyout ca-key.pem > ca.pem
 
-openssl req -out node-1-csr.pem -new -nodes -keyout node-1-key.pem -days 365 -subj "/CN=system:node:node-1" -newkey rsa:2048
-openssl x509 -in node-1-csr.pem -out node-1.pem -days 356 -req -CA rootCA.pem -CAkey rootCA-key.pem
+export indexes=( 0 1 2 3 4 5 6 7 8 )
+#export names=( admin node-1 node-2 node-3 kube-controller-manager kube-proxy kube-scheduler kubernetes service-account )
+export names=( admin node-1 node-2 node-3 kube-controller-manager kube-proxy kube-scheduler kubernetes service-account )
+export altnames=( 'DNS:system:masters,DNS:k8s-master' \
+'DNS:system:node:node-1,DNS:node-1' \
+'DNS:system:node:node-2,DNS:node-2' \
+'DNS:system:node:node-3,DNS:node-3' \
+'DNS:kube-controller-manager,DNS:k8s-master' \
+'DNS:kube-proxy' \
+'DNS:kube-scheduler,DNS:k8s-master' \
+'DNS:kubernetes,DNS:k8s-master' \
+'DNS:service-account' \
+)
+for i in ${indexes[@]}; do
+  echo "FOR CN=${names[i]} ALTNAMES=${altnames[i]}"
+  CN="${names[i]}" ALTNAMES="${altnames[i]}" openssl req -config openssl.conf -new > ${names[i]}-csr.pem
+  CN="${names[i]}" ALTNAMES="${altnames[i]}" openssl ca -config openssl.conf -batch -in ${names[i]}-csr.pem > ${names[i]}.pem
+done
 
-openssl req -out node-2-csr.pem -new -nodes -keyout node-2-key.pem -days 365 -subj "/CN=system:node:node-2" -newkey rsa:2048
-openssl x509 -in node-2-csr.pem -out node-2.pem -days 356 -req -CA rootCA.pem -CAkey rootCA-key.pem
 
-openssl req -out node-3-csr.pem -new -nodes -keyout node-3-key.pem -days 365 -subj "/CN=system:node:node-3" -newkey rsa:2048
-openssl x509 -in node-3-csr.pem -out node-3.pem -days 356 -req -CA rootCA.pem -CAkey rootCA-key.pem
 
-openssl req -out kube-controller-manager-csr.pem -new -nodes -keyout kube-controller-manager-key.pem -days 365 -subj "/CN=system:kube-controller-manager" -newkey rsa:2048
-openssl x509 -in kube-controller-manager-csr.pem -out kube-controller-manager.pem -days 356 -req -CA rootCA.pem -CAkey rootCA-key.pem
-
-openssl req -out kube-proxy-csr.pem -new -nodes -keyout kube-proxy-key.pem -days 365 -subj "/CN=system:kube-proxy" -newkey rsa:2048
-openssl x509 -in kube-proxy-csr.pem -out kube-proxy.pem -days 356 -req -CA rootCA.pem -CAkey rootCA-key.pem
-
-openssl req -out kube-scheduler-csr.pem -new -nodes -keyout kube-scheduler-key.pem -days 365 -subj "/CN=system:kube-scheduler" -newkey rsa:2048
-openssl x509 -in kube-scheduler-csr.pem -out kube-scheduler.pem -days 356 -req -CA rootCA.pem -CAkey rootCA-key.pem
-
-openssl req -out kubernetes-csr.pem -new -nodes -keyout kubernetes-key.pem -days 365 -subj "/CN=system:kubernetes" -newkey rsa:2048
-openssl x509 -in kubernetes-csr.pem -out kubernetes.pem -days 356 -req -CA rootCA.pem -CAkey rootCA-key.pem
-
-openssl req -out service-account-csr.pem -new -nodes -keyout service-account-key.pem -days 365 -subj "/CN=service-account" -newkey rsa:2048
-openssl x509 -in service-account-csr.pem -out service-account.pem -days 356 -req -CA rootCA.pem -CAkey rootCA-key.pem
 KUBERNETES_PUBLIC_ADDRESS=k8s-master
 
 
 for instance in node-1 node-2 node-3; do 
 		kubectl config set-cluster kubernetes-devops \
-						--certificate-authority=rootCA.pem \
+						--certificate-authority=ca.pem \
 						--embed-certs=true \
 						--server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 						--kubeconfig=${instance}.kubeconfig
@@ -53,7 +52,7 @@ done
 
 {
 		kubectl config set-cluster kubernetes-devops \
-						--certificate-authority=rootCA.pem \
+						--certificate-authority=ca.pem \
 						--embed-certs=true \
 						--server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 						--kubeconfig=kube-proxy.kubeconfig
@@ -74,9 +73,9 @@ done
 
 {
 		kubectl config set-cluster kubernetes-devops \
-						--certificate-authority=rootCA.pem \
+						--certificate-authority=ca.pem \
 						--embed-certs=true \
-						--server=https://127.0.0.1:6443 \
+						--server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 						--kubeconfig=kube-controller-manager.kubeconfig
 
 		kubectl config set-credentials system:kube-controller-manager \
@@ -95,9 +94,9 @@ done
 
 {
 		kubectl config set-cluster kubernetes-devops \
-						--certificate-authority=rootCA.pem \
+						--certificate-authority=ca.pem \
 						--embed-certs=true \
-						--server=https://127.0.0.1:6443 \
+						--server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 						--kubeconfig=kube-scheduler.kubeconfig
 
 		kubectl config set-credentials system:kube-scheduler \
@@ -116,9 +115,9 @@ done
 
 {
 		kubectl config set-cluster kubernetes-devops \
-						--certificate-authority=rootCA.pem \
+						--certificate-authority=ca.pem \
 						--embed-certs=true \
-						--server=https://127.0.0.1:6443 \
+						--server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 						--kubeconfig=admin.kubeconfig
 
 		kubectl config set-credentials admin \
@@ -134,7 +133,7 @@ done
 
 		kubectl config use-context default --kubeconfig=admin.kubeconfig
 }
-ENCRIPTION_KEY=`head -c 32 /dev/urandom | base64`
+ENCRYPTION_KEY=`head -c 32 /dev/urandom | base64`
 
 cat > encryption-config.yaml <<EOF
 kind: EncryptionConfig
@@ -142,10 +141,10 @@ apiVersion: v1
 resources:
 - resources:
   - secrets
-	providers:
-	- aescbc:
-	  keys:
-	  - name: key1
-	    secret: ${ENCRYPTION_KEY}
+  providers:
+  - aescbc:
+      keys:
+      - name: key1
+        secret: ${ENCRYPTION_KEY}
   - identity: {}
 EOF

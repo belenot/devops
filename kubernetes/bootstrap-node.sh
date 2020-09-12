@@ -1,1 +1,1 @@
-cp /vagrant/certs/${instance}-key.pem /vagrant/certs/${instance}.pem ~/
+sudo sh /vagrant/node/bootstrap-node.sh
