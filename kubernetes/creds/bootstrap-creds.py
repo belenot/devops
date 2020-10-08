@@ -2,6 +2,7 @@
 import json
 import datetime
 import uuid
+import os
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -13,10 +14,19 @@ from cryptography.x509.oid import NameOID
 ca_info = { 'CN': 'LazyLamantin Test CA', 'ALTNAMES': [ 'DNS:lazylamantin.io' ] }
 
 def main():
+  clear_dir()
   ca_crt, ca_key = init_ca(ca_info)
   with open('roles.json') as f:
     roles = json.loads(f.read())
   roles_certs = create_certs(ca_crt, ca_key, roles)
+
+def clear_dir():
+  for filename in os.listdir():
+    if (not filename.endswith('.conf')
+    and not filename.endswith('.sh')
+    and not filename.endswith('.py')
+    and not filename.endswith('.json')):
+      print('Delete', filename)
     
 def init_ca(ca_info):
   one_day = datetime.timedelta(1, 0, 0)
@@ -61,6 +71,9 @@ def init_ca(ca_info):
     with open(ca_info['CN'].split(' ')[0].lower() + '-crt.pem', 'wb') as f:
       f.write(certificate.public_bytes(encoding = serialization.Encoding.PEM))
   return certificate, private_key
+
+def create_certs(a,b,c):
+  pass
       
       
 if __name__ == '__main__':
