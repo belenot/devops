@@ -1,0 +1,6 @@
+{
+  "common_name": "LazyLamantin Test CA",
+  "subjectAltNames": [
+    "DNS:lazylamantin.io"
+  ]
+}
