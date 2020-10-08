@@ -1,0 +1,54 @@
+[
+  {
+    "admin": [
+      "DNS:system:masters",
+      "DNS:k8s-master"
+    ]
+  },
+  {
+    "node-1": [
+      "DNS:system:node:node-1",
+      "DNS:node-1"
+    ]
+  },
+  {
+    "node-2": [
+      "DNS:system:node:node-2",
+      "DNS:node-2"
+    ]
+  },
+  {
+    "node-3": [
+      "DNS:system:node:node-3",
+      "DNS:node-3"
+    ]
+  },
+  {
+    "kube-controller-manager": [
+      "DNS:kube-controller-manager",
+      "DNS:k8s-master"
+    ]
+  },
+  {
+    "kube-proxy": [
+      "DNS:kube-proxy"
+    ]
+  },
+  {
+    "kube-scheduler": [
+      "DNS:kube-scheduler",
+      "DNS:k8s-master"
+    ]
+  },
+  {
+    "kubernetes": [
+      "DNS:kubernetes",
+      "DNS:k8s-master"
+    ]
+  },
+  {
+    "service-account\n": [
+      "DNS:service-account\n"
+    ]
+  }
+]
