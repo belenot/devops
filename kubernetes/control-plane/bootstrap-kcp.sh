@@ -16,7 +16,7 @@ sudo cp kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local
 # Configure the Kubernetes API Server
 sudo mkdir -p /var/lib/kubernetes/
 
-sudo cp /vagrant/creds/ca.pem /vagrant/creds/ca-key.pem \
+sudo cp /vagrant/creds/ca-crt.pem /vagrant/creds/ca-key.pem \
 /vagrant/creds/kubernetes-key.pem /vagrant/creds/kubernetes.pem \
 /vagrant/creds/service-account-key.pem /vagrant/creds/service-account.pem \
 /vagrant/creds/encryption-config.yaml /var/lib/kubernetes/
@@ -40,15 +40,15 @@ ExecStart=/usr/local/bin/kube-apiserver \\
   --audit-log-path=/var/log/audit.log \\
   --authorization-mode=Node,RBAC \\
   --bind-address=0.0.0.0 \\
-  --client-ca-file=/var/lib/kubernetes/ca.pem \\
+  --client-ca-file=/var/lib/kubernetes/ca-crt.pem \\
   --enable-admission-plugins=NamespaceLifecycle,NodeRestriction,LimitRanger,ServiceAccount,DefaultStorageClass,ResourceQuota \\
-  --etcd-cafile=/var/lib/kubernetes/ca.pem \\
+  --etcd-cafile=/var/lib/kubernetes/ca-crt.pem \\
   --etcd-certfile=/var/lib/kubernetes/kubernetes.pem \\
   --etcd-keyfile=/var/lib/kubernetes/kubernetes-key.pem \\
   --etcd-servers=https://k8s-master:2379 \\
   --event-ttl=1h \\
   --encryption-provider-config=/var/lib/kubernetes/encryption-config.yaml \\
-  --kubelet-certificate-authority=/var/lib/kubernetes/ca.pem \\
+  --kubelet-certificate-authority=/var/lib/kubernetes/ca-crt.pem \\
   --kubelet-client-certificate=/var/lib/kubernetes/kubernetes.pem \\
   --kubelet-client-key=/var/lib/kubernetes/kubernetes-key.pem \\
   --kubelet-https=true \\
@@ -81,11 +81,11 @@ ExecStart=/usr/local/bin/kube-controller-manager \\
   --bind-address=0.0.0.0 \\
   --cluster-cidr=10.200.0.0/16 \\
   --cluster-name=kubernetes \\
-  --cluster-signing-cert-file=/var/lib/kubernetes/ca.pem \\
+  --cluster-signing-cert-file=/var/lib/kubernetes/ca-crt.pem \\
   --cluster-signing-key-file=/var/lib/kubernetes/ca-key.pem \\
   --kubeconfig=/var/lib/kubernetes/kube-controller-manager.kubeconfig \\
   --leader-elect=true \\
-  --root-ca-file=/var/lib/kubernetes/ca.pem \\
+  --root-ca-file=/var/lib/kubernetes/ca-crt.pem \\
   --service-account-private-key-file=/var/lib/kubernetes/service-account-key.pem \\
   --service-cluster-ip-range=10.32.0.0/24 \\
   --use-service-account-credentials=true \\
@@ -144,7 +144,7 @@ server {
 
   location /healthz {
      proxy_pass                    https://127.0.0.1:6443/healthz;
-     proxy_ssl_trusted_certificate /var/lib/kubernetes/ca.pem;
+     proxy_ssl_trusted_certificate /var/lib/kubernetes/ca-crt.pem;
   }
 }
 EOF

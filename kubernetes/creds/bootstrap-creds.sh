@@ -2,7 +2,7 @@ ls | grep -v '\.conf$\|\.sh$'   | xargs rm -rf
 touch database.txt && echo 'unique_subject=yes' > database.txt.attr && echo 1000 > serial.txt
 
 # Create root ca
-CN=belenot ALTNAMES='DNS:belenot' openssl req -config openssl.conf -new -x509 -keyout ca-key.pem > ca.pem
+CN=belenot ALTNAMES='DNS:belenot' openssl req -config openssl.conf -new -x509 -keyout ca-key.pem > ca-crt.pem
 
 export indexes=( 0 1 2 3 4 5 6 7 8 )
 #export names=( admin node-1 node-2 node-3 kube-controller-manager kube-proxy kube-scheduler kubernetes service-account )
@@ -30,7 +30,7 @@ KUBERNETES_PUBLIC_ADDRESS=k8s-master
 
 for instance in node-1 node-2 node-3; do 
 		kubectl config set-cluster kubernetes-devops \
-						--certificate-authority=ca.pem \
+						--certificate-authority=ca-crt.pem \
 						--embed-certs=true \
 						--server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 						--kubeconfig=${instance}.kubeconfig
@@ -52,7 +52,7 @@ done
 
 {
 		kubectl config set-cluster kubernetes-devops \
-						--certificate-authority=ca.pem \
+						--certificate-authority=ca-crt.pem \
 						--embed-certs=true \
 						--server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 						--kubeconfig=kube-proxy.kubeconfig
@@ -73,7 +73,7 @@ done
 
 {
 		kubectl config set-cluster kubernetes-devops \
-						--certificate-authority=ca.pem \
+						--certificate-authority=ca-crt.pem \
 						--embed-certs=true \
 						--server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 						--kubeconfig=kube-controller-manager.kubeconfig
@@ -94,7 +94,7 @@ done
 
 {
 		kubectl config set-cluster kubernetes-devops \
-						--certificate-authority=ca.pem \
+						--certificate-authority=ca-crt.pem \
 						--embed-certs=true \
 						--server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 						--kubeconfig=kube-scheduler.kubeconfig
@@ -115,7 +115,7 @@ done
 
 {
 		kubectl config set-cluster kubernetes-devops \
-						--certificate-authority=ca.pem \
+						--certificate-authority=ca-crt.pem \
 						--embed-certs=true \
 						--server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443 \
 						--kubeconfig=admin.kubeconfig

@@ -117,7 +117,7 @@ EOF
 # Configure the Kubelet
 sudo cp /vagrant/creds/${HOSTNAME}-key.pem /vagrant/creds/${HOSTNAME}.pem /var/lib/kubelet/
 sudo cp /vagrant/creds/${HOSTNAME}.kubeconfig /var/lib/kubelet/kubeconfig
-sudo cp /vagrant/creds/ca.pem /var/lib/kubernetes/
+sudo cp /vagrant/creds/ca-crt.pem /var/lib/kubernetes/
 
 # Create the kubelet-config.yaml configuration file:
 cat <<EOF | sudo tee /var/lib/kubelet/kubelet-config.yaml
@@ -129,7 +129,7 @@ authentication:
   webhook:
     enabled: true
   x509:
-    clientCAFile: "/var/lib/kubernetes/ca.pem"
+    clientCAFile: "/var/lib/kubernetes/ca-crt.pem"
 authorization:
   mode: Webhook
 clusterDomain: "cluster.local"

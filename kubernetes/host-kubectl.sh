@@ -3,7 +3,7 @@
   KUBERNETES_PUBLIC_ADDRESS=k8s-master
 
   kubectl config set-cluster kubernetes \
-    --certificate-authority=creds/ca.pem \
+    --certificate-authority=creds/ca-crt.pem \
     --embed-certs=true \
     --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443
 

@@ -81,8 +81,10 @@ def init_ca(ca_info):
         backend=default_backend()
     )
 
-    ca_key_filename = ca_info['common_name'].split(' ')[0].lower() + '-key.pem'
-    ca_crt_filename = ca_info['common_name'].split(' ')[0].lower() + '-crt.pem'
+    # ca_info['common_name'].split(' ')[0].lower() + '-key.pem'
+    ca_key_filename = 'ca-key.pem'
+    # ca_info['common_name'].split(' ')[0].lower() + '-crt.pem'
+    ca_crt_filename = 'ca-crt.pem'
     logger.info('Write %s certificate and key in %s %s',
                 ca_info['common_name'], ca_crt_filename, ca_key_filename)
 
