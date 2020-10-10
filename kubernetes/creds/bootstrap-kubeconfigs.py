@@ -27,7 +27,7 @@ def main():
         name = role['common_name']
         kubeconfig = create_kubeconfig(
             ca, certificate, key, name, kubernetes_public_address)
-        open(name + '.kubeconfig', mode='w').write(json.dumps(kubeconfig))
+        open(name + '.kubeconfig', mode='w').write(json.dumps(kubeconfig, indent=2))
     encryption_config = create_encryption_config()
     open('encryption-config.yaml', mode='w').write(json.dumps(encryption_config))
     logger.info('Wrote to encryption-config.yaml')

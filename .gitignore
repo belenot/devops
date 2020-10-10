@@ -13,5 +13,10 @@
 !/kubernetes/creds/*.py
 !/kubernetes/creds/*.json
 
+/kubernetes/binaries/*
+!/kubernetes/binaries/*.py
+!/kubernetes/binaries/*.json
+
+
 /kubernetes/control-plane/binaries
 /kubernetes/node/binaries
