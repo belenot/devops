@@ -33,7 +33,7 @@ def main():
     roles_certs = []
     for role in roles:
         role_cert = create_cert(
-            ca_crt, ca_key, role['common_name'], role['subjectAltNames'])
+            ca_crt, ca_key, role['common_name'], role['subjectAltNames'], role['filename'])
         roles_certs.append(role_cert)
 
 
@@ -113,7 +113,7 @@ def init_ca(ca_info):
     return certificate, private_key
 
 
-def create_cert(ca_crt, ca_key, common_name, subjectAltNames):
+def create_cert(ca_crt, ca_key, common_name, subjectAltNames, filename):
     logger.info('Create certificate for %s with sans %s',
                 common_name, ','.join(subjectAltNames))
     one_day = datetime.timedelta(1, 0, 0)
@@ -162,8 +162,8 @@ def create_cert(ca_crt, ca_key, common_name, subjectAltNames):
         backend=default_backend()
     )
 
-    ca_key_filename = common_name.split(' ')[0].lower() + '-key.pem'
-    ca_crt_filename = common_name.split(' ')[0].lower() + '-crt.pem'
+    ca_key_filename = filename + '-key.pem'
+    ca_crt_filename = filename + '-crt.pem'
     logger.info('Write %s certificate and key in %s %s',
                 common_name, ca_crt_filename, ca_key_filename)
 

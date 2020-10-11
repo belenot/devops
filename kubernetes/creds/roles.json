@@ -2,71 +2,64 @@
   {
     "common_name": "admin",
     "subjectAltNames": [
-      "system:masters",
       "master-node"
     ],
-    "kubernetes_name": "system:masters"
+    "filename": "admin"
   },
   {
-    "common_name": "node-1",
+    "common_name": "system:node:worker-node-1",
     "subjectAltNames": [
-      "system:node:node-1",
-      "node-1"
+      "worker-node-1"
     ],
-    "kubernetes_name": "system:node:node-1"
+    "filename": "worker-node-1"
   },
   {
-    "common_name": "node-2",
+    "common_name": "system:node:worker-node-2",
     "subjectAltNames": [
-      "system:node:node-2",
-      "node-2"
+      "worker-node-2"
     ],
-    "kubernetes_name": "system:node:node-2"
+    "filename": "worker-node-2"
   },
   {
-    "common_name": "node-3",
+    "common_name": "system:node:worker-node-3",
     "subjectAltNames": [
-      "system:node:node-3",
       "node-3"
     ],
-    "kubernetes_name": "system:node:node-3"
+    "filename": "worker-node-3"
   },
   {
-    "common_name": "kube-controller-manager",
+    "common_name": "system:kube-controller-manager",
     "subjectAltNames": [
-      "kube-controller-manager",
       "master-node"
     ],
-    "kubernetes_name": "kube-controller-manager"
+    "filename": "kube-controller-manager"
   },
   {
-    "common_name": "kube-proxy",
+    "common_name": "system:kube-proxy",
     "subjectAltNames": [
-      "kube-proxy"
-    ],
-    "kubernetes_name": "kube-proxy"
-  },
-  {
-    "common_name": "kube-scheduler",
-    "subjectAltNames": [
-      "kube-scheduler",
       "master-node"
     ],
-    "kubernetes_name": "kube-scheduler"
+    "filename": "kube-proxy"
+  },
+  {
+    "common_name": "system:kube-scheduler",
+    "subjectAltNames": [
+      "master-node"
+    ],
+    "filename": "kube-scheduler"
   },
   {
     "common_name": "kubernetes",
     "subjectAltNames": [
-      "kubernetes",
       "master-node"
     ],
-    "kubernetes_name": "kubernetes"
+    "filename": "kubernetes"
   },
   {
     "common_name": "service-account",
     "subjectAltNames": [
-      "service-account"
+      "master-node"
     ],
-    "kubernetes_name": "service-account"
+    "filename": "service-account"
   }
 ]

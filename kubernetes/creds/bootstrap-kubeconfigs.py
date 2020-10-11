@@ -17,18 +17,19 @@ def main():
     logger.info("Create kubeconfigs for roles.")
     ca = open('ca-crt.pem').read()
     roles = json.loads(open('roles.json').read())
-    kubernetes_public_address = 'https://k8s-master:6443'
+    kubernetes_public_address = 'https://master-node:6443'
     logger.info("Ca file ca-crt.pem.")
     logger.info("Kubernetes public address {}.".format(
         kubernetes_public_address))
     for role in roles:
         logger.info('Create {}.kubeconfig'.format(role['common_name']))
-        certificate = open(role['common_name'] + '-crt.pem').read()
-        key = open(role['common_name'] + '-key.pem').read()
+        certificate = open(role['filename'] + '-crt.pem').read()
+        key = open(role['filename'] + '-key.pem').read()
         name = role['common_name']
         kubeconfig = create_kubeconfig(
             ca, certificate, key, name, kubernetes_public_address)
-        open(name + '.kubeconfig', mode='w').write(json.dumps(kubeconfig, indent=2))
+        open(role['filename'] + '.kubeconfig',
+             mode='w').write(json.dumps(kubeconfig, indent=2))
     encryption_config = create_encryption_config()
     open('encryption-config.json', mode='w').write(json.dumps(encryption_config))
     logger.info('Wrote to encryption-config.json')
@@ -60,7 +61,7 @@ def create_kubeconfig(ca, certificate, key, name, kubernetes_public_address):
         'preferences': {},
         'users': [
             {
-                'name': 'system:node:node-1',
+                'name': name,
                 'user': {
                     'client-certificate-data': str(base64.b64encode(bytes(certificate, encoding='utf-8')), encoding='utf-8'),
                     'client-key-data': str(base64.b64encode(bytes(key, encoding='utf-8')), encoding='utf-8')

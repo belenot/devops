@@ -1,1 +1,1 @@
-{"kind": "EncryptionConfig", "apiVersion": "v1", "resources": [{"resources": ["secrets"], "providers": [{"aescbc": {"keys": [{"name": "key1", "secret": "bSXLynn44ZQvAJWDrRKZrJ5Apaf2u9+y0Dflob7/mBM="}]}}, {"identity": {}}]}]}
+{"kind": "EncryptionConfig", "apiVersion": "v1", "resources": [{"resources": ["secrets"], "providers": [{"aescbc": {"keys": [{"name": "key1", "secret": "cU47d7dp+Nv50cEaLfvhBo6dlruSE2vVHvlmtrZvu9Y="}]}}, {"identity": {}}]}]}
