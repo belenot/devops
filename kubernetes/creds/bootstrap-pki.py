@@ -4,6 +4,7 @@ import datetime
 import uuid
 import os
 import logging
+import ipaddress
 
 from cryptography import x509
 from cryptography.hazmat.backends import default_backend
@@ -59,9 +60,7 @@ def init_ca(ca_info):
     public_key = private_key.public_key()
     builder = x509.CertificateBuilder()
     builder = builder.subject_name(x509.Name([
-        x509.NameAttribute(NameOID.COMMON_NAME, ca_info['common_name']),
-        x509.NameAttribute(NameOID.ORGANIZATION_NAME,
-                           ca_info['common_name'].split(' ')[0])
+        x509.NameAttribute(NameOID.COMMON_NAME, ca_info['common_name'])
     ]))
     builder = builder.issuer_name(x509.Name([
         x509.NameAttribute(NameOID.COMMON_NAME, ca_info['common_name'])
@@ -75,15 +74,26 @@ def init_ca(ca_info):
     builder = builder.add_extension(
         x509.BasicConstraints(ca=True, path_length=None), critical=True
     )
+    builder = builder.add_extension(
+        x509.KeyUsage(
+            key_encipherment=True,
+            key_cert_sign=True,
+            crl_sign=True,
+            digital_signature=True,
+            content_commitment=True,
+            data_encipherment=True,
+            key_agreement=True,
+            encipher_only=False,
+            decipher_only=False
+        ), critical=False
+    )
     certificate = builder.sign(
         private_key=private_key,
         algorithm=hashes.SHA256(),
         backend=default_backend()
     )
 
-    # ca_info['common_name'].split(' ')[0].lower() + '-key.pem'
     ca_key_filename = 'ca-key.pem'
-    # ca_info['common_name'].split(' ')[0].lower() + '-crt.pem'
     ca_crt_filename = 'ca-crt.pem'
     logger.info('Write %s certificate and key in %s %s',
                 ca_info['common_name'], ca_crt_filename, ca_key_filename)
@@ -92,13 +102,13 @@ def init_ca(ca_info):
         f.write(private_key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.BestAvailableEncryption(
-                b'belenot')
+            encryption_algorithm=serialization.NoEncryption()
         ))
 
-        with open(ca_crt_filename, 'wb') as f:
-            f.write(certificate.public_bytes(
-                encoding=serialization.Encoding.PEM))
+    with open(ca_crt_filename, 'wb') as f:
+        f.write(certificate.public_bytes(
+            encoding=serialization.Encoding.PEM))
+
     logger.info('CA was successfuly generated')
     return certificate, private_key
 
@@ -135,9 +145,16 @@ def create_cert(ca_crt, ca_key, common_name, subjectAltNames):
     )
     builder = builder.add_extension(
         x509.SubjectAlternativeName(
-            [x509.DNSName(name) for name in subjectAltNames]
+            [x509.DNSName(name) for name in subjectAltNames] +
+            [x509.IPAddress(ipaddress.IPv4Address('127.0.0.1'))]
         ),
         critical=True
+    )
+    builder = builder.add_extension(
+        x509.ExtendedKeyUsage([
+            x509.oid.ExtendedKeyUsageOID.CLIENT_AUTH,
+            x509.oid.ExtendedKeyUsageOID.SERVER_AUTH,
+        ]), critical=False
     )
     certificate = builder.sign(
         private_key=ca_key,
@@ -154,13 +171,12 @@ def create_cert(ca_crt, ca_key, common_name, subjectAltNames):
         f.write(private_key.private_bytes(
             encoding=serialization.Encoding.PEM,
             format=serialization.PrivateFormat.TraditionalOpenSSL,
-            encryption_algorithm=serialization.BestAvailableEncryption(
-                b'belenot')
+            encryption_algorithm=serialization.NoEncryption()
         ))
 
-        with open(ca_crt_filename, 'wb') as f:
-            f.write(certificate.public_bytes(
-                encoding=serialization.Encoding.PEM))
+    with open(ca_crt_filename, 'wb') as f:
+        f.write(certificate.public_bytes(
+            encoding=serialization.Encoding.PEM))
     return certificate, private_key
 
 

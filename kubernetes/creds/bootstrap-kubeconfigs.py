@@ -1,4 +1,5 @@
 import base64
+import os
 import json
 import logging
 
@@ -14,10 +15,10 @@ logger.addHandler(ch)
 
 def main():
     logger.info("Create kubeconfigs for roles.")
-    ca = open('lazylamantin-crt.pem').read()
+    ca = open('ca-crt.pem').read()
     roles = json.loads(open('roles.json').read())
     kubernetes_public_address = 'https://k8s-master:6443'
-    logger.info("Ca file lazylamantin-crt.pem.")
+    logger.info("Ca file ca-crt.pem.")
     logger.info("Kubernetes public address {}.".format(
         kubernetes_public_address))
     for role in roles:
@@ -29,8 +30,8 @@ def main():
             ca, certificate, key, name, kubernetes_public_address)
         open(name + '.kubeconfig', mode='w').write(json.dumps(kubeconfig, indent=2))
     encryption_config = create_encryption_config()
-    open('encryption-config.yaml', mode='w').write(json.dumps(encryption_config))
-    logger.info('Wrote to encryption-config.yaml')
+    open('encryption-config.json', mode='w').write(json.dumps(encryption_config))
+    logger.info('Wrote to encryption-config.json')
 
 
 def create_kubeconfig(ca, certificate, key, name, kubernetes_public_address):
@@ -84,10 +85,12 @@ def create_encryption_config():
                             'keys': [
                                 {
                                     'name': 'key1',
-                                            'secret': 'kubernetes-encryption'
+                                    'secret': str(base64.b64encode(os.urandom(32)), encoding='utf-8')
                                 }
                             ]
                         },
+                    },
+                    {
                         'identity': {}
                     }
                 ]

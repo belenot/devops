@@ -2,70 +2,70 @@
   {
     "common_name": "admin",
     "subjectAltNames": [
-      "DNS:system:masters",
-      "DNS:k8s-master"
+      "system:masters",
+      "master-node"
     ],
     "kubernetes_name": "system:masters"
   },
   {
     "common_name": "node-1",
     "subjectAltNames": [
-      "DNS:system:node:node-1",
-      "DNS:node-1"
+      "system:node:node-1",
+      "node-1"
     ],
     "kubernetes_name": "system:node:node-1"
   },
   {
     "common_name": "node-2",
     "subjectAltNames": [
-      "DNS:system:node:node-2",
-      "DNS:node-2"
+      "system:node:node-2",
+      "node-2"
     ],
     "kubernetes_name": "system:node:node-2"
   },
   {
     "common_name": "node-3",
     "subjectAltNames": [
-      "DNS:system:node:node-3",
-      "DNS:node-3"
+      "system:node:node-3",
+      "node-3"
     ],
     "kubernetes_name": "system:node:node-3"
   },
   {
     "common_name": "kube-controller-manager",
     "subjectAltNames": [
-      "DNS:kube-controller-manager",
-      "DNS:k8s-master"
+      "kube-controller-manager",
+      "master-node"
     ],
     "kubernetes_name": "kube-controller-manager"
   },
   {
     "common_name": "kube-proxy",
     "subjectAltNames": [
-      "DNS:kube-proxy"
+      "kube-proxy"
     ],
     "kubernetes_name": "kube-proxy"
   },
   {
     "common_name": "kube-scheduler",
     "subjectAltNames": [
-      "DNS:kube-scheduler",
-      "DNS:k8s-master"
+      "kube-scheduler",
+      "master-node"
     ],
     "kubernetes_name": "kube-scheduler"
   },
   {
     "common_name": "kubernetes",
     "subjectAltNames": [
-      "DNS:kubernetes",
-      "DNS:k8s-master"
+      "kubernetes",
+      "master-node"
     ],
     "kubernetes_name": "kubernetes"
   },
   {
     "common_name": "service-account",
     "subjectAltNames": [
-      "DNS:service-account"
+      "service-account"
     ],
     "kubernetes_name": "service-account"
   }
